@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  scrapy:
+    build: ./scripts/scrapy_project
+    container_name: scrapy-guardian
+    volumes:
+      - ./scripts/scrapy_project:/app/scrapy_project
+    command: ["scrapy", "crawl", "guardian"]
+  
+  airflow:
+    image: apache/airflow:2.5.0
+    container_name: airflow
+    restart: always
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./scripts:/home/airflow/gcs/scripts
+    ports:
+      - "8080:8080"
+    command: ["airflow", "scheduler"]
